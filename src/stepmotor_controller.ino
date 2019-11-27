@@ -1,57 +1,168 @@
 #include <String.h>
 
-int dir[6] = {0};
-int step[6] = {0};
-int enable[6] = {0};
-String solve = ""; //ros接数据
-bool solve_dir = 0;//0顺1逆
-char solve_side = "";
-char solve_degree = "";
+// a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r
+// U  U' U2 R  R' R2 F  F' F2 D  D' D2 L  L' L2 B  B' B2 
 
-String all_ctrl = "UDLRFB";
+// D  F  L  B  R  U
+// 22,25,28,31,34,37  DIR
+// 23,26,29,32,35,38  STEP
+// 24,27,30,33,36,39  EN
 
+String solve = "adgjmp";  //ros接数据
+int stop_ = 0;
 void tranform()
 {
-    for(int i=0;i<=solve.length();i++)
+    for (int i = 0; i <= solve.length(); i++)
     {
-        if(solve[i]==" ")
+        switch (solve[i])
         {
-            runstep();
-            solve_dir = 0;
+        case 'a':
+            motor('U', 0);
+            break;
+        case 'b':
+            motor('U', 1);
+            break;
+        case 'c':
+            motor('U', 2);
+            break;
+        case 'd':
+            motor('R', 0);
+            break;
+        case 'e':
+            motor('R', 1);
+            break;
+        case 'f':
+            motor('R', 2);
+            break;
+        case 'g':
+            motor('F', 0);
+            break;
+        case 'h':
+            motor('F', 1);
+            break;
+        case 'i':
+            motor('F', 2);
+            break;
+        case 'j':
+            motor('D', 0);
+            break;
+        case 'k':
+            motor('D', 1);
+            break;
+        case 'l':
+            motor('D', 2);
+            break;
+        case 'm':
+            motor('L', 0);
+            break;
+        case 'n':
+            motor('L', 1);
+            break;
+        case 'o':
+            motor('L', 2);
+            break;
+        case 'p':
+            motor('B', 0);
+            break;
+        case 'q':
+            motor('B', 1);
+            break;
+        case 'r':
+            motor('B', 2);
+            break;
         }
-        if(strchr(all_ctrl.c_str(),solve[i])!=0)
-        {
-            solve_side = all_ctrl[strchr(all_ctrl.c_str(),solve[i])];
-        }
-        if(solve[i]=="\'")
-        {
-            solve_dir = 1;
-        }
+        delay(1000);
     }
-    runstep(); //完成最后一个指令
-    solve = "";
 }
+// a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r
+// U  U' U2 R  R' R2 F  F' F2 D  D' D2 L  L' L2 B  B' B2 
 
-void runstep()
+// D  F  L  B  R  U
+// 22,25,28,31,34,37  DIR
+// 23,26,29,32,35,38  STEP
+
+void motor(char side, int type)
 {
-    //there is nothing :-)
-    //waiting for MoYuhuaiyu to finish it 
+
+    int step;
+    int dir;
+    switch (side)
+    {
+    case 'D':
+        step = 23;
+        dir = step + 1;
+        break;
+    case 'F':
+        step = 26;
+        dir = step + 1;
+        break;
+    case 'L':
+        step = 29;
+        dir = step + 1;
+        break;
+    case 'B':
+        step = 32;
+        dir = step + 1;
+        break;
+    case 'R':
+        step = 35;
+        dir = step + 1;
+        break;
+    case 'U':
+        step = 38;
+        dir = step + 1;
+        break;
+    }
+    switch (type)
+    {
+    case 0:
+        digitalWrite(dir, HIGH);
+        for (int i = 0; i < 50; i++)
+        {
+            digitalWrite(step, HIGH);
+            delayMicroseconds(2000);
+            digitalWrite(step, LOW);
+            delayMicroseconds(2000);
+        }
+        break;
+    case 1:
+        digitalWrite(dir, LOW);
+        for (int i = 0; i < 50; i++)
+        {
+            digitalWrite(step, HIGH);
+            delayMicroseconds(2000);
+            digitalWrite(step, LOW);
+            delayMicroseconds(2000);
+        }
+        break;
+    case 2:
+        for (int i = 0; i < 100; i++)
+        {
+            digitalWrite(step, HIGH);
+            delayMicroseconds(2000);
+            digitalWrite(step, LOW);
+            delayMicroseconds(2000);
+        }
+        break;
+    }
 }
 
-void set_motor (int en_pin)
+
+void set_motor(int en_pin)
 {
     en_pin;
-    int step_pin = en_pin+1;
-    int dir_pin = en_pin+2;
-    pinMode(en_pin,OUTPUT); // Enable: EN可以使用单片机端口控制，也可以直接连接GND使能
-    pinMode(step_pin,OUTPUT); // steps:脉冲个数
-    pinMode(dir_pin,OUTPUT); // dir:为方向控制
-    digitalWrite(en_pin,LOW); // Set Enable low
+    int step_pin = en_pin + 1;
+    int dir_pin = en_pin + 2;
+    pinMode(en_pin, OUTPUT);   // Enable: EN可以使用单片机端口控制，也可以直接连接GND使能
+    pinMode(step_pin, OUTPUT); // steps:脉冲个数
+    pinMode(dir_pin, OUTPUT);  // dir:为方向控制
+    digitalWrite(en_pin, LOW); // Set Enable low
 }
 
 void setup()
 {
-    for(int pin=22;pin<=37;pin+=3)
+    Serial.begin(9600);
+    for (int pin = 22; pin <= 37; pin += 3)
     {
         set_motor(pin);
     }
@@ -59,8 +170,10 @@ void setup()
 
 void loop()
 {
-    if(solve != 0)
+    if (stop_ == 0)
     {
         tranform();
+        Serial.print("23333");
+        stop_ = 1;
     }
 }
