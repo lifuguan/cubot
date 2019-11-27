@@ -12,31 +12,32 @@ def talker():
     pub = rospy.Publisher('chatter', String, queue_size=10)
     rospy.init_node('cubot', anonymous=True)
     rate = rospy.Rate(10)  
-    hello_str = ""
+    msg_str = ""
     
-    while not rospy.is_shutdown():
+    while(True):
         r = requests.get(solve_url)
         # detected the file 
         if r.status_code == 200:
-            hello_str = str(r.content)
+            msg_str = str(r.content)
             # trigger to delete
             requests.get(delete_url)
             break
         else:
             print "trying to read the file ... "
-    
+
     # broadcast in ROS
     while not rospy.is_shutdown():
-        rospy.loginfo(hello_str)
-        pub.publish(hello_str)
+        res_str = kociemba.solve(msg_str)
+        rospy.loginfo(res_str)
+        pub.publish(res_str)
         rate.sleep()
     
 
 
 if __name__ == '__main__':
     # r = requests.get(solve_url)
-    # hello_str = str(r.content, encoding="utf-8")
-    # print(hello_str)
+    # msg_str = str(r.content, encoding="utf-8")
+    # print(msg_str)
     try:
         talker()
     except rospy.ROSInterruptException:
