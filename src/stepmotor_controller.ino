@@ -1,5 +1,6 @@
-#include <String.h>
-
+#include <ros.h>
+#include <string.h>
+#include <std_msgs/String.h>
 // a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r
 // U  U' U2 R  R' R2 F  F' F2 D  D' D2 L  L' L2 B  B' B2 
 
@@ -8,8 +9,18 @@
 // 23,26,29,32,35,38  STEP
 // 24,27,30,33,36,39  EN
 
-String solve = "adgjmp";  //ros接数据
+
+String solve = "";  //ros接数据
 int stop_ = 0;
+
+void solveCallBack(const std_msgs::String &solve_msg)
+{
+  solve = solve_msg.data;
+}
+
+ros::NodeHandle cubot_motor;
+ros::Subscriber<std_msgs::String> solve_message_sub("chatter", solveCallBack);
+
 void tranform()
 {
     for (int i = 0; i <= solve.length(); i++)
@@ -161,6 +172,8 @@ void set_motor(int en_pin)
 
 void setup()
 {
+    cubot_motor.initNode();
+    cubot_motor.subscribe(solve_message_sub);
     Serial.begin(9600);
     for (int pin = 22; pin <= 37; pin += 3)
     {
@@ -170,7 +183,7 @@ void setup()
 
 void loop()
 {
-    if (stop_ == 0)
+    if (solve!=""&&stop_ == 0)
     {
         tranform();
         Serial.print("23333");
