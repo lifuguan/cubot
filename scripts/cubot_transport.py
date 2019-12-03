@@ -3,7 +3,7 @@
 '''
 @Author: lifuguan
 @Date: 2019-11-21 19:57:45
-@LastEditTime: 2019-11-27 23:53:13
+@LastEditTime: 2019-12-03 20:55:24
 @LastEditors: Please set LastEditors
 @Description: In User Settings Edit
 @FilePath: /cubot/scripts/cubot_transport.py
@@ -14,8 +14,8 @@ from std_msgs.msg import String
 import kociemba
 import requests
 
-solve_url = 'http://192.168.43.185/cube_group/code.txt'
-delete_url = 'http://192.168.43.185/cube_group/delete.php'
+solve_url = 'http://123.206.49.6/cube_group/code.txt'
+delete_url = 'http://123.206.49.6/cube_group/delete.php'
 
 
 
