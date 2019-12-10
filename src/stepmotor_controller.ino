@@ -82,9 +82,23 @@ void tranform()
             motor('B', 2);
             break;
         }
-        delay(1000);
+        delay(400);
     }
 }
+
+
+void en(int en_pin)
+{
+    digitalWrite(en_pin,LOW);
+    for(int en_onboard = 22;en_onboard <=37;en_onboard+=3)
+    {
+        if(en_pin!=en_onboard)
+        {
+            digitalWrite(en_onboard,HIGH);
+        }
+    }
+}
+
 // a  b  c  d  e  f  g  h  i  j  k  l  m  n  o  p  q  r
 // U  U' U2 R  R' R2 F  F' F2 D  D' D2 L  L' L2 B  B' B2 
 
@@ -92,36 +106,50 @@ void tranform()
 // 22,25,28,31,34,37  DIR
 // 23,26,29,32,35,38  STEP
 
+
 void motor(char side, int type)
 {
 
     int step;
     int dir;
+    int en_pin;
     switch (side)
     {
     case 'D':
         step = 23;
         dir = step + 1;
+        en_pin = step - 1;
+        en(en_pin);
         break;
     case 'F':
         step = 26;
         dir = step + 1;
+        en_pin = step - 1;
+        en(en_pin);
         break;
     case 'L':
         step = 29;
         dir = step + 1;
+        en_pin = step - 1;
+        en(en_pin);
         break;
     case 'B':
         step = 32;
         dir = step + 1;
+        en_pin = step - 1;
+        en(en_pin);
         break;
     case 'R':
         step = 35;
         dir = step + 1;
+        en_pin = step - 1;
+        en(en_pin);
         break;
     case 'U':
         step = 38;
         dir = step + 1;
+        en_pin = step - 1;
+        en(en_pin);
         break;
     }
     switch (type)
@@ -131,9 +159,9 @@ void motor(char side, int type)
         for (int i = 0; i < 50; i++)
         {
             digitalWrite(step, HIGH);
-            delayMicroseconds(2000);
+            delayMicroseconds(1500);
             digitalWrite(step, LOW);
-            delayMicroseconds(2000);
+            delayMicroseconds(1500);
         }
         break;
     case 1:
@@ -141,18 +169,18 @@ void motor(char side, int type)
         for (int i = 0; i < 50; i++)
         {
             digitalWrite(step, HIGH);
-            delayMicroseconds(2000);
+            delayMicroseconds(1500);
             digitalWrite(step, LOW);
-            delayMicroseconds(2000);
+            delayMicroseconds(1500);
         }
         break;
     case 2:
         for (int i = 0; i < 100; i++)
         {
             digitalWrite(step, HIGH);
-            delayMicroseconds(2000);
+            delayMicroseconds(1500);
             digitalWrite(step, LOW);
-            delayMicroseconds(2000);
+            delayMicroseconds(1500);
         }
         break;
     }
@@ -167,17 +195,23 @@ void set_motor(int en_pin)
     pinMode(en_pin, OUTPUT);   // Enable: EN可以使用单片机端口控制，也可以直接连接GND使能
     pinMode(step_pin, OUTPUT); // steps:脉冲个数
     pinMode(dir_pin, OUTPUT);  // dir:为方向控制
-    digitalWrite(en_pin, LOW); // Set Enable low
+    digitalWrite(en_pin, HIGH); // Set Enable low
 }
 
 void setup()
 {
     cubot_motor.initNode();
     cubot_motor.subscribe(solve_message_sub);
-    Serial.begin(9600);
     for (int pin = 22; pin <= 37; pin += 3)
     {
         set_motor(pin);
+    }
+    for (int power = 40;power <= 50;power+=2)
+    {
+        pinMode(power,OUTPUT);
+        digitalWrite(power,HIGH);
+        pinMode(power+1,OUTPUT);
+        digitalWrite(power+1,LOW);
     }
 }
 
@@ -186,7 +220,7 @@ void loop()
     if (solve!=""&&stop_ == 0)
     {
         tranform();
-        Serial.print("23333");
         stop_ = 1;
     }
+    cubot_motor.spinOnce();
 }
