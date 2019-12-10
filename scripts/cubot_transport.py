@@ -3,7 +3,7 @@
 '''
 @Author: lifuguan
 @Date: 2019-11-21 19:57:45
-@LastEditTime: 2019-12-03 20:55:24
+@LastEditTime: 2019-12-08 21:10:39
 @LastEditors: Please set LastEditors
 @Description: In User Settings Edit
 @FilePath: /cubot/scripts/cubot_transport.py
@@ -36,10 +36,12 @@ def talker():
             if r.status_code == 200:
                 msg_str = str(r.content)
                 # trigger to delete
-                requests.get(delete_url)
+                # requests.get(delete_url)
                 break
             else:
                 print "trying to read the file ... "
+                break
+    #msg_str = "DRLUUBFBRBLURRLRUBLRDDFDLFUFUFFDBRDUBRUFLLFDDBFLUBLRBD"
     print msg_str
     res_str = kociemba.solve(msg_str)
     list_ = res_str.split(" ")

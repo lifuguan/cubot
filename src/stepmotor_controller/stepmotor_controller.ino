@@ -159,9 +159,9 @@ void motor(char side, int type)
         for (int i = 0; i < 50; i++)
         {
             digitalWrite(step, HIGH);
-            delayMicroseconds(1500);
+            delayMicroseconds(1300);
             digitalWrite(step, LOW);
-            delayMicroseconds(1500);
+            delayMicroseconds(1300);
         }
         break;
     case 1:
@@ -169,18 +169,18 @@ void motor(char side, int type)
         for (int i = 0; i < 50; i++)
         {
             digitalWrite(step, HIGH);
-            delayMicroseconds(1500);
+            delayMicroseconds(1300);
             digitalWrite(step, LOW);
-            delayMicroseconds(1500);
+            delayMicroseconds(1300);
         }
         break;
     case 2:
         for (int i = 0; i < 100; i++)
         {
             digitalWrite(step, HIGH);
-            delayMicroseconds(1500);
+            delayMicroseconds(1300);
             digitalWrite(step, LOW);
-            delayMicroseconds(1500);
+            delayMicroseconds(1300);
         }
         break;
     }
